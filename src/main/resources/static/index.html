@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>計算機</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+</head>
+<body>
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+    enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
+<div id="app">
+    <div id="calWrap">
+        <div>
+            <input type="checkbox" id="toggle" v-model="isChecked" @change="toggleSwitch" />
+            <label for="toggle">{{isChecked ? "連線" : "斷線"}}</label>
+        </div>
+        <div class="top">
+            <input type="text" v-model="total" />
+        </div>
+        <div id="keys">
+            <div v-on:click="key(7)">7</div>
+            <div v-on:click="key(8)">8</div>
+            <div v-on:click="key(9)">9</div>
+            <div v-on:click="key('+')">+</div>
+            <br>
+            <div v-on:click="key(4)">4</div>
+            <div v-on:click="key(5)">5</div>
+            <div v-on:click="key(6)">6</div>
+            <div v-on:click="key('-')">-</div>
+            <br>
+            <div v-on:click="key(1)">1</div>
+            <div v-on:click="key(2)">2</div>
+            <div v-on:click="key(3)">3</div>
+            <div v-on:click="key('*')">*</div>
+            <br>
+            <div v-on:click="key(0)">0</div>
+            <div v-on:click="clear()" class="clear">c</div>
+            <div v-on:click="equal()">=</div>
+            <div v-on:click="key('/')">/</div>
+        </div>
+    </div>
+</div>
+<script src="/calculator.js"></script>
+</body>
+</html>

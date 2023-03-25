@@ -1,0 +1,128 @@
+/*body {*/
+/*    background-color: #f5f5f5;*/
+/*}*/
+
+/*#main-content {*/
+/*    max-width: 940px;*/
+/*    padding: 2em 3em;*/
+/*    margin: 0 auto 20px;*/
+/*    background-color: #fff;*/
+/*    border: 1px solid #e5e5e5;*/
+/*    -webkit-border-radius: 5px;*/
+/*    -moz-border-radius: 5px;*/
+/*    border-radius: 5px;*/
+/*}*/
+
+
+/*計算機按鈕部分*/
+/* ------------------------------------------------------------------
+Google Fonts:
+------------------------------------------------------------------ */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+/***********************************************************************************************/
+/* =Common Styles */
+/***********************************************************************************************/
+body {
+    font-family: 'Open Sans', sans-serif;
+    /*background-color: #4894D6;*/
+    background-color: rgb(199,237,204);
+}
+body #calWrap {
+    background-color: #77889a;
+    border-radius: 23px;
+    padding: 2em 1em 1em 1em;
+    margin: auto;
+    width: auto;
+    /*width: 350px;*/
+    clear: both;
+    display: table;
+}
+body .top input {
+    height: 36px;
+    width: 100%;
+    /*width: auto;*/
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 4px;
+    margin: 0 0 14px 0;
+    border: 0;
+    padding: 0 1em;
+    box-shadow: 0 4px rgba(0, 0, 0, 0.2);
+}
+body #keys div {
+    cursor: pointer;
+    width: 66px;
+    height: 36px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 2em;
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 4px rgba(0, 0, 0, 0.2);
+    margin: 0 7px 11px 0;
+    float: left;
+    transition: all 0.2s ease;
+}
+body #keys div:hover {
+    background-color: #D6D6D6;
+}
+body #keys .zero {
+    width: 138px !important;
+}
+body #keys .clear {
+    background-color: #ffd900 !important;
+}
+
+/*開關css*/
+.switch input
+{
+    display: none;
+}
+
+.switch
+{
+    display: inline-block;
+    width: 60px; /*=w*/
+    height: 30px; /*=h*/
+    margin: 4px;
+    transform: translateY(50%);
+    position: relative;
+}
+
+.slider
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 30px;
+    box-shadow: 0 0 0 2px #777, 0 0 4px #777;
+    cursor: pointer;
+    border: 4px solid transparent;
+    overflow: hidden;
+    transition: 0.2s;
+}
+
+.slider:before
+{
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    background-color: #777;
+    border-radius: 30px;
+    transform: translateX(-30px); /*translateX(-(w-h))*/
+    transition: 0.2s;
+}
+
+input:checked + .slider:before
+{
+    transform: translateX(30px); /*translateX(w-h)*/
+    background-color: limeGreen;
+}
+
+input:checked + .slider
+{
+    box-shadow: 0 0 0 2px limeGreen, 0 0 8px limeGreen;
+}
