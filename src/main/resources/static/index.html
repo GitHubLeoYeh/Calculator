@@ -16,7 +16,7 @@
 <div id="app">
     <div id="calWrap">
         <div>
-            <input type="checkbox" id="toggle" v-model="isChecked" @change="toggleSwitch" />
+            <input type="checkbox" id="toggle" v-model="isChecked" @click="clickConnect" @change="toggleSwitch" />
             <label for="toggle">{{isChecked ? "連線" : "斷線"}}</label>
         </div>
         <div class="top">
@@ -43,6 +43,15 @@
             <div v-on:click="equal()">=</div>
             <div v-on:click="key('/')">/</div>
         </div>
+    </div>
+    <div>
+        <div>{{ formula_str }}</div>
+        <button @click="getRandomFormula">隨意公式</button>
+        <button @click="paste">貼上吧</button>
+    </div>
+    <div class="overlay" v-if="isLoading">
+        <div class="spinner"></div>
+        <div class="message">連線中...</div>
     </div>
 </div>
 <script src="/calculator.js"></script>

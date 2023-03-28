@@ -3,9 +3,12 @@ let app = new Vue({
     el: '#app',
     data: {
         isChecked: false,
-        total: 0
+        total: 0,
+        isLoading: false,
+        formula_str: "",
     },
     mounted() { // 相當於jquery ready
+        // this.loadingEvent(true);
         console.log('mounted!');
     },
     methods: {
@@ -22,31 +25,47 @@ let app = new Vue({
         },
         toggleSwitch() {
             console.log("connect:", this.isChecked);
-            if(this.isChecked){
-                let socket = new SockJS('http://127.0.0.1:8080/stomp-endpoint');
-                stompClient = Stomp.over(socket);
-                stompClient.heartbeat.outgoing = 2000;  // client will send heartbeats every 20000ms
-                stompClient.heartbeat.incoming = 2000;     // client does not want to receive heartbeats from the server
-                stompClient.reconnect_delay = 5000;     // Add the following if you need automatic reconnect (delay is in milli seconds)
-                stompClient.connect({}, function (frame) {
-                    console.log('Connected: ' + frame);
-                    stompClient.subscribe('/topic/calculator', function (greeting) {
-                        console.log(greeting);
-                        let result = JSON.parse(greeting.body).message;
-                        console.log(result);
-                        app.showAnswer(result);
-                    });
-                });
+            if(this.isStompClientConnected(stompClient)){
+                this.disconnectServer();
+                this.clickConnect(false);
             }else{
-                if (this.isStompClientConnected(stompClient)) {
-                    stompClient.disconnect(function() {
-                        console.log("See you next time!");
-                    });
-                }
-                this.total = 0;
-                console.log("Disconnected");
+                this.connectServer();
+                this.clickConnect(true);
             }
-            // 可以在這裡加上更多的處理邏輯
+        },
+        connectServer() {
+            let socket = new SockJS('/stomp-endpoint');
+            stompClient = Stomp.over(socket);
+            stompClient.heartbeat.outgoing = 2000;  // client will send heartbeats every 20000ms
+            stompClient.heartbeat.incoming = 2000;     // client does not want to receive heartbeats from the server
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                app.loadingEvent(false);
+                stompClient.subscribe('/topic/calculator', function (resObj) {
+                    console.log(resObj);
+                    let result = JSON.parse(resObj.body).message;
+                    console.log(result);
+                    app.showAnswer(result);
+                });
+                stompClient.subscribe('/topic/random_formula', function (resObj) {
+                    console.log(resObj.body);
+                    app.formula_str = resObj.body;
+                });
+            }, (err) => {
+                // 斷線重連線
+                this.loadingEvent(true);
+                console.log(err);
+                this.connectServer(); // 重新连接
+            });
+        },
+        disconnectServer() {
+            if (this.isStompClientConnected(stompClient)) {
+                stompClient.disconnect(function() {
+                    console.log("See you next time!");
+                });
+            }
+            this.total = 0;
+            console.log("Disconnected");
         },
         key(num) {
             return this.total===0 ? this.total += num : this.total += '' + num;
@@ -62,6 +81,22 @@ let app = new Vue({
                 // return this.total = eval(equal);   //js 計算結果
                 stompClient.send("/app/tool", {}, JSON.stringify({'inputString': equal}));
             }
+        },
+        clickConnect(status) {
+            this.isChecked = status;
+        },
+        loadingEvent(isShow) {
+            this.isLoading = isShow;
+        },
+        getRandomFormula() {
+            if (!this.isStompClientConnected(stompClient)){
+                alert('請先連線!');
+            }else{
+                stompClient.send("/app/generate_formula", {});
+            }
+        },
+        paste() {
+            this.total = this.formula_str;
         }
     }
 });

@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class CalculateServiceTest {
 
     @Autowired
+    private CalculatorStringVO calculatorStringVO;
+
+    @Autowired
     private CalculateService calculateService;
 
     @MockBean
@@ -29,39 +32,41 @@ class CalculateServiceTest {
     @BeforeEach
     void setUp() {
         System.out.println("Setting it up!");
+        assertNotNull(calculatorStringVO);
         assertNotNull(calculateService);
     }
 
     @Test
     void calculateAdditionTwoNumber() throws ScriptException {
-        String testStr = "3+2";
-        assertEquals(calculateService.calculate(testStr), new BigDecimal(5));
+        calculatorStringVO.setInputString("3+2");
+        assertEquals(calculateService.calculate(calculatorStringVO), new BigDecimal(5));
     }
 
     @Test
     void calculateSubtractionTwoNumber() throws ScriptException {
-        String testStr = "3-2";
-        assertEquals(calculateService.calculate(testStr), new BigDecimal(1));
+        calculatorStringVO.setInputString("3-2");
+        assertEquals(calculateService.calculate(calculatorStringVO), new BigDecimal(1));
     }
 
     @Test
     void calculateMultiplicationTwoNumber() throws ScriptException {
-        String testStr = "3*2";
-        assertEquals(calculateService.calculate(testStr), new BigDecimal(6));
+        calculatorStringVO.setInputString("3*2");
+        assertEquals(calculateService.calculate(calculatorStringVO), new BigDecimal(6));
     }
 
     @Test
     void calculateDivisionTwoNumber() throws ScriptException {
-        String testStr = "3/2";
-        assertEquals(calculateService.calculate(testStr), new BigDecimal("1.5"));
+        calculatorStringVO.setInputString("3/2");
+        assertEquals(calculateService.calculate(calculatorStringVO), new BigDecimal("1.5"));
     }
 
     @Test
     void calculateWithRandomFormulaStringMock() throws ScriptException {
         Mockito.when(randomFormulaStringGeneratorMock.getFormulaString()).thenReturn("1+2-3*4/5+6-7*8/9");
         String randomFormulaString = randomFormulaStringGeneratorMock.getFormulaString();
-        System.out.println(calculateService.calculate(randomFormulaString));
-        assertEquals(calculateService.calculate(randomFormulaString), new BigDecimal("0.3777777777777773"));
+        calculatorStringVO.setInputString(randomFormulaString);
+        System.out.println(calculateService.calculate(calculatorStringVO));
+        assertEquals(calculateService.calculate(calculatorStringVO), new BigDecimal("0.3777777777777773"));
     }
 
     //TODO :random如何測試
@@ -70,34 +75,37 @@ class CalculateServiceTest {
         String xxx = "64.09+37.1+110.1/136.1*136.1-129.1*138.1-63.1/82.1*156.1+156.1+20.1";
 //        String randomFormulaString = randomFormulaStringGenerator.getFormulaString();
 //        System.out.println(calculateService.calculate(xxx));
-        assertEquals(calculateService.calculate(xxx), new BigDecimal("-17561.19454323995"));
+        calculatorStringVO.setInputString(xxx);
+        assertEquals(calculateService.calculate(calculatorStringVO), new BigDecimal("-17561.19454323995"));
     }
 
-    //TODO:tofix測試失敗
     @Test
-    void calculateErrorResult() throws ScriptException {
-        String testFormula = "Apple";
-        assertEquals(calculateService.calculate(testFormula), "無法計算，請檢查察輸入字串數字與運算子是否有輸入錯誤，或是簡短算式。");
+    void calculateErrorResult() {
+        calculatorStringVO.setInputString("Apple");
+        Throwable exception = assertThrows(ScriptException.class, () -> calculateService.calculate(calculatorStringVO));
+        assertEquals("ReferenceError: \"Apple\" is not defined in <eval> at line number 1", exception.getMessage());
     }
 
-    //TODO:tofix測試失敗
     @Test
     void calculateInfinity() throws ScriptException {
-        String testFormula = "20/0";
-        assertEquals(calculateService.calculate(testFormula), "無法計算，請檢查察輸入字串數字與運算子是否有輸入錯誤，或是簡短算式。");
+        calculatorStringVO.setInputString("20/0");
+        Throwable exception = assertThrows(ScriptException.class, () -> calculateService.calculate(calculatorStringVO));
+        assertEquals("無法計算，請檢查察輸入字串數字與運算子是否有輸入錯誤，或是簡短算式。", exception.getMessage());
     }
 
-    //TODO:tofix測試失敗
     @Test
     void calculateMinusInfinity() throws ScriptException {
-        String testFormula = "-20/0";
-        assertEquals(calculateService.calculate(testFormula), "無法計算，請檢查察輸入字串數字與運算子是否有輸入錯誤，或是簡短算式。");
+        calculatorStringVO.setInputString("-20/0");
+        Throwable exception = assertThrows(ScriptException.class, () -> calculateService.calculate(calculatorStringVO));
+        assertEquals("無法計算，請檢查察輸入字串數字與運算子是否有輸入錯誤，或是簡短算式。", exception.getMessage());
     }
 
     @AfterEach
     void tearDown() {
         System.out.println("Running: tearDown");
+        calculatorStringVO = null;
         calculateService = null;
+        assertNull(calculatorStringVO);
         assertNull(calculateService);
     }
 }

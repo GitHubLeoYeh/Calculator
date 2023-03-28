@@ -28,7 +28,7 @@ public class RandomFormulaStringGenerator {
         return resultStr.toString();
     }
 
-    public String getRandomFormula(){
+    private String getRandomFormula(){
         Map<Integer, String> formulaMap = new HashMap<>();
         formulaMap.put(0, "+");
         formulaMap.put(1, "-");

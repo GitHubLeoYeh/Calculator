@@ -8,12 +8,15 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 @NoArgsConstructor
 @Component
 public class CalculateService {
-    public BigDecimal calculate(String calculateString) throws ScriptException, NumberFormatException {
+    public BigDecimal calculate(CalculatorStringVO calculatorStringVO) throws ScriptException, NumberFormatException {
+        if (!calculatorStringVO.validate()){ // validate input String
+            throw new NumberFormatException("");
+        }
+        String calculateString = calculatorStringVO.getInputString();
         // 創建一個ScriptEngineManager對象
         ScriptEngineManager mgr = new ScriptEngineManager();
         // 使用JavaScript解析器
@@ -22,7 +25,8 @@ public class CalculateService {
         // 計算表達式
         String result = Objects.toString(engine.eval(calculateString), "NaN");
         System.out.println(calculateString + " = " + result);
-        System.out.println("result.getClass() = " + result.getClass());        if (result.equals("NaN") || result.equals("Infinity") || result.equals("-Infinity")){ // Infinity 算是Double類別
+        System.out.println("result.getClass() = " + result.getClass());
+        if (result.equals("NaN") || result.equals("Infinity") || result.equals("-Infinity")){ // Infinity 算是Double類別
             throw new ScriptException("");
         }else{
             answer = new BigDecimal(result);
@@ -30,20 +34,13 @@ public class CalculateService {
         return answer;
     }
 
-    public static boolean isNumeric(String strNum) {
-        Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
-        if (strNum == null) {
-            return false;
-        }
-        return pattern.matcher(strNum).matches();
-    }
-
-
     public static void main(String[] args) throws ScriptException {
+        CalculatorStringVO calculatorStringVO = new CalculatorStringVO();
 //        String toCalculateStr = "3+9+8*4/5.5";
         String toCalculateStr = "Gorden";
 //        String toCalculateStr = "3+9+8*4/0";
-        System.out.println(new CalculateService().calculate(toCalculateStr));
+        calculatorStringVO.setInputString(toCalculateStr);
+        System.out.println(new CalculateService().calculate(calculatorStringVO));
 //        BigDecimal xxx;
 //        System.out.println(xxx);
     }
